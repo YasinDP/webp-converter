@@ -1,0 +1,15 @@
+#!/bin/bash
+# WebP Converter wrapper script
+# This ensures Cairo library is found on macOS
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Set Cairo library path if installed via Homebrew
+if command -v brew &> /dev/null; then
+    CAIRO_PREFIX=$(brew --prefix cairo 2>/dev/null)
+    if [ -n "$CAIRO_PREFIX" ] && [ -d "$CAIRO_PREFIX/lib" ]; then
+        export DYLD_FALLBACK_LIBRARY_PATH="$CAIRO_PREFIX/lib:${DYLD_FALLBACK_LIBRARY_PATH:-}"
+    fi
+fi
+
+exec python3 "$SCRIPT_DIR/convert.py" "$@"
